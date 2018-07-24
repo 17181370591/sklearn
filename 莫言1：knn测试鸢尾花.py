@@ -1,4 +1,5 @@
 #https://www.bilibili.com/video/av17003173/?p=5
+#knn用来预测新数据属于哪一类
 
 import numpy as np
 from sklearn import datasets
@@ -14,7 +15,7 @@ iris_Y=iris.target
 X_train,X_test,Y_train,Y_test=train_test_split(iris_X,iris_Y,test_size=.8)
 print(iris_Y,Y_test)              #这里可以发现iris_Y数据是排好序的而Y_test是乱序的
 
-knn=KNeighborsClassifier()
+knn=KNeighborsClassifier()                   #knn用来预测新数据属于哪一类
 knn.fit(X_train,Y_train)
 
 res=knn.predict(X_test)
