@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 def loadData(x='2.txt'):                     #从文件读取数据，返回城市的列表，和每个数据对维度组成的列表的列表
-    a=pd.read_csv('2.txt',sep=',',header=None)
+    a=pd.read_csv(x,sep=',',header=None)
     return a.loc[:,0].tolist(),a.loc[:,1:].values.tolist()
 
 
