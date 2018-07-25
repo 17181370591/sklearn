@@ -42,8 +42,11 @@ x=4
 cityName,data=loadData('2.txt')
 km=KMeans(n_clusters=x)
 label=km.fit_predict(data)                       #每个城市的标签（整数）组成的np.array
-expenses=np.sum(km.cluster_centers_,axis=1)             #不同标签的中值组成的np.array
-print('expenses:',expenses)
+
+#cluster_centers是一个标签内所有项的中值组成的np.array，
+#即聚类中心坐标的列表，所以expenses这个变量几乎没有意义。。
+expenses=np.sum(km.cluster_centers_,axis=1)             
+print('expenses:',expenses) 
 
 
 
