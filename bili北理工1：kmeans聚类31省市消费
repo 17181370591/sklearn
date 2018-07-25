@@ -1,0 +1,58 @@
+'''
+视频地址：https://www.bilibili.com/video/av15478453?p=5
+课件和数据地址：https://github.com/caiiiac/Machine-Learning-with-Python
+算法原理
+
+kmeans的计算方法如下：
+
+1 随机选取k个中心点
+2 遍历所有数据，将每个数据划分到最近的中心点中
+3 计算每个聚类的平均值，并作为新的中心点
+4 重复2-3，直到这k个中线点不再变化（收敛了），或执行了足够多的迭代
+
+时间复杂度：O(I*n*k*m)
+空间复杂度：O(n*m)
+
+其中m为每个元素字段个数（即特征维度？），n为数据量，I为迭代个数。一般I,k,m均可认为是常量，
+所以时间和空间复杂度可以简化为O(n)，即线性的。
+
+kmeans方法的参数：
+n_clusters：用于指定聚类中心的个数。
+init：初始聚类中心的初始化方法。
+max_iter：最大迭代次数。
+一般只给出n_cluster即可，init默认是k-means++，max_iter默认300
+data：数据
+label：聚类后个数据的标签
+fit+predict：计算簇中心一级为簇中心分配序号
+'''
+
+import numpy as np,pickle,time,pandas as pd
+from sklearn import datasets
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+
+def loadData(x='2.txt'):                     #从文件读取数据，返回城市的列表，和每个数据对维度组成的列表的列表
+    a=pd.read_csv('2.txt',sep=',',header=None)
+    return a.loc[:,0].tolist(),a.loc[:,1:].values.tolist()
+
+
+x=4
+cityName,data=loadData('2.txt')
+km=KMeans(n_clusters=x)
+label=km.fit_predict(data)                       #每个城市的标签（整数）组成的np.array
+expenses=np.sum(km.cluster_centers_,axis=1)             #不同标签的中值组成的np.array
+print('expenses:',expenses)
+
+
+
+CityCluster=[[] for i in range(x)]
+for i in range(len(cityName)):
+    CityCluster[label[i]].append(cityName[i])
+for i in range(len(CityCluster)):   
+    print(i,CityCluster[i])
+
+
+
+
