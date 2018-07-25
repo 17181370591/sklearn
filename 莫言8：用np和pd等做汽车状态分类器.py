@@ -1,7 +1,11 @@
 '''
+
 data是pd对象，data.values可以非常方便的将data转化numpy对象，
 data.values.astype(np.float32)则进一步转成float32的numpy对象。
+
 原帖地址：https://www.bilibili.com/video/av17310310/?p=1
+数据地址：http://archive.ics.uci.edu/ml/machine-learning-databases/
+
 由于numpy和sklearn不能处理文本，所以要将文本处理成数字，
 但是比如把红绿蓝比继承0,1,2就表示红到蓝的距离比绿到蓝的距离远，这是不科学的，所以考虑使用维度标记。
 pandas的get_dummies能将文本转化成维度，并加上前缀，具体看下面的链接
