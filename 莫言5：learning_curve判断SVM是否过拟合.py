@@ -20,14 +20,12 @@ Y=digits['target']                  #1797
 #cv=3表示每个数据测试5次，每个数据训练数据和测试数据比例是4:1，会收集到5个数据，
 #而train_sizes表示记录6次，所以train_loss,test_loss是6*5；
 #似乎learning_curve里，train_sizes的每个值a表示训练了百分比a的值时，
-#记录一次训练样本数，训练集上准确率:交叉验证集上的准确率
+#记录一次训练样本数，训练集上准确率,交叉验证集上的准确率
 #修改gamma可能会发现图像先降后升，这说明测试的数据越多，进行测试时效果反而变差，原因是过拟合
 '''
 
 train_sizes,train_loss,test_loss=learning_curve(
-        SVC(gamma=.01),X,Y,cv=10,
-        scoring='neg_mean_squared_error',
-        train_sizes=np.arange(.1,1.1,.1))
+        SVC(gamma=.01),X,Y,cv=10,scoring='neg_mean_squared_error',train_sizes=np.arange(.1,1.1,.1))
 train_loss_mean=-np.mean(train_loss,axis=1)
 test_loss_mean=-np.mean(test_loss,axis=1)
 
