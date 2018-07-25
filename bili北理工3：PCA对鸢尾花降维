@@ -1,0 +1,82 @@
+'''
+PCA(sklearn参数详解)
+
+一、代码怎么写
+
+sklearn.decomposition.PCA(n_components=None, copy=True, whiten=False)  
+
+二、关于参数
+
+n_components:  
+意义：PCA算法中所要保留的主成分个数n，也即保留下来的特征个数n
+类型：int 或者 string，缺省时默认为None，所有成分被保留。
+          赋值为int，比如n_components=1，将把原始数据降到一个维度。
+          赋值为string，比如n_components='mle'，将自动选取特征个数n，使得满足所要求的方差百分比。
+copy:
+类型：bool，True或者False，缺省时默认为True。
+意义：表示是否在运行算法时，将原始训练数据复制一份。若为True，则运行PCA算法后，原始训练数据的值不会有任何改变，
+因为是在原始数据的副本上进行运算；若为False，则运行PCA算法后，原始训练数据的值会改，因为是在原始数据上进行降维计算。
+whiten:
+类型：bool，缺省时默认为False
+意义：白化。
+
+三、PCA对象属性
+
+components_：返回具有最大方差的成分。
+explained_variance_ratio_：返回 所保留的n个成分各自的方差百分比。
+n_components_：返回所保留的成分个数n。
+mean_：
+noise_variance_：
+
+四、PCA对象属性
+
+fit(X,y=None)
+fit()可以说是scikit-learn中通用的方法，每个需要训练的算法都会有fit()方法，它其实就是算法中的“训练”这一步骤。
+因为PCA是无监督学习算法，此处y自然等于None。
+
+fit(X)，表示用数据X来训练PCA模型。
+
+函数返回值：调用fit方法的对象本身。比如pca.fit(X)，表示用X对pca这个对象进行训练。
+
+fit_transform(X)
+用X来训练PCA模型，同时返回降维后的数据。
+newX=pca.fit_transform(X)，newX就是降维后的数据。
+
+inverse_transform()
+将降维后的数据转换成原始数据，X=pca.inverse_transform(newX)
+
+transform(X)
+将数据X转换成降维后的数据。当模型训练好后，对于新输入的数据，都可以用transform方法来降维。
+
+此外，还有get_covariance()、get_precision()、get_params(deep=True)、score(X, y=None)等方法。
+'''
+
+
+
+import numpy as np,pickle,time,pandas as pd
+from sklearn import datasets,metrics
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans,DBSCAN
+from sklearn.decomposition import PCA
+
+
+
+data=datasets.load_iris()
+X=data.data
+Y=data.target
+pca=PCA(n_components=2)                             #把特征降成2维
+
+
+
+reduced_X=pca.fit_transform(X)                      #降维后的特征数据
+
+red=reduced_X[Y==0]
+green=reduced_X[Y==1]
+blue=reduced_X[Y==2]
+plt.scatter(red[:,0],red[:,1])
+plt.scatter(green[:,0],green[:,1])
+plt.scatter(blue[:,0],blue[:,1])
+
+plt.show()
