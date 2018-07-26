@@ -1,0 +1,83 @@
+import numpy as np,pickle,time,pandas as pd
+from sklearn import datasets,decomposition
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt,cv2
+from sklearn.cluster import KMeans
+
+
+
+dataset=datasets.fetch_olivetti_faces(
+            shuffle=True,     
+            random_state=np.random.RandomState(0))
+                                      )
+
+
+
+faces=dataset.data               #400*4096,400张图
+
+
+
+n_row,n_col=2,3
+n_components=n_row*n_col
+image_shape=64,64
+
+
+
+#NMF会生成w和h，分别是基础图像矩阵和系数矩阵，pg用来打印系数矩阵
+def pg(images,n_col=n_col,n_row=n_row):
+    for i,comp in enumerate(images):        
+        plt.subplot(n_row,n_col,i+1)
+        #print('comp.max(),-comp.min()=',comp.max(),-comp.min())
+        vmax=max(comp.max(),-comp.min())
+        plt.imshow(comp.reshape(image_shape),
+                                  vmin=-vmax,vmax=vmax,
+                                  interpolation='nearest'
+                   )
+        plt.xticks(())
+        plt.yticks(())
+    plt.show()
+    
+    
+estimators=[('PCA',decomposition.PCA(n_components=6,witen=True)),
+            ('NMF',decomposition.NMF(n_components=6,init='nndsvda',tol=5e-3))]
+
+
+
+res=[]
+for name,estimator in estimators:
+    #Learn a NMF model for the data X and returns the transformed data.
+    x=estimator.fit_transform(faces)                     #基础图像矩阵
+    components_=estimator.components_                    #系数矩阵
+    res.append((x,components_))
+    pg(components_[:n_components])
+
+
+
+'''
+下面的代码是自己添加的，包括上面和res相关的部分，作用是：w和h相乘得到的矩阵v就是图片降维后的数据，
+所以将新数据和原数据画图对比。但是新数据画图时会出现按顺序随机取数据的bug，不知道怎么解决
+'''
+s1=np.array(np.dot(res[0][0],res[0][1]))
+s2=np.array(np.dot(res[1][0],res[1][1]))
+
+
+#归一化后才能画图
+s1=cv2.normalize(s1,s1,0,255,cv2.NORM_MINMAX).astype(int)
+s2=cv2.normalize(s2,s2,0,255,cv2.NORM_MINMAX).astype(int)
+fs=cv2.normalize(faces,faces,0,255,cv2.NORM_MINMAX).astype(int)
+
+def f1(x):
+    x=x.reshape(64,64)
+    #x=cv2.normalize(x,x,0,255,cv2.NORM_MINMAX).astype(int)
+    return x
+def f2(x1,x2,n):
+    x1,x2=f1(x1),f1(x2)
+    y=np.zeros((64,128))
+    y[:,:64]=x1
+    y[:,64:]=x2
+    cv2.imshow('',y)
+    cv2.imwrite('{}.jpg'.format(n),y)
+
+for i in range(20):
+	f2(s2[i],fs[i],i)
