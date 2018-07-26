@@ -24,7 +24,7 @@ image_shape=64,64
 
 
 
-#NMF会生成w和h，分别是基础图像矩阵和系数矩阵，pg用来打印系数矩阵
+#NMF会生成w和h，分别是基础图像矩阵（即降维后的数据）和系数矩阵，pg用来打印系数矩阵
 def pg(images,n_col=n_col,n_row=n_row):
     for i,comp in enumerate(images):        
         plt.subplot(n_row,n_col,i+1)
@@ -46,8 +46,9 @@ estimators=[('PCA',decomposition.PCA(n_components=6,witen=True)),
 
 res=[]
 for name,estimator in estimators:
+
     #Learn a NMF model for the data X and returns the transformed data.
-    x=estimator.fit_transform(faces)                     #基础图像矩阵
+    x=estimator.fit_transform(faces)                     #基础图像矩阵（即降维后的数据）
     components_=estimator.components_                    #系数矩阵
     res.append((x,components_))
     pg(components_[:n_components])
