@@ -173,10 +173,12 @@ l2=b[:,-1]
 
 
 
-def mlp():                                          #0.975，速度超级慢
+def mlp():                                   #0.978，速度超级慢，我把原参数改成.01,200还是比较慢
+    cs1,cs2=.01,200
+    #cs1,cs2=.0001,2000
     clf=MLPClassifier(hidden_layer_sizes=(100,),
                   activation='logistic',solver='adam',
-                  learning_rate_init=.0001,max_iter=2000)
+                  learning_rate_init=cs1,max_iter=cs2)
     clf.fit(d1,l1)
     print(clf.score(d2,l2))
     
