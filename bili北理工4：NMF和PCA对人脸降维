@@ -68,7 +68,7 @@ s1=np.array(np.dot(res[0][0],res[0][1]))
 s2=np.array(np.dot(res[1][0],res[1][1]))
 
 
-#归一化后才能画图
+#归一化后才能画图，将PCA，NMF降维后返回的图和原图进行对比，发现NMF效果比PCA好很多
 s1=cv2.normalize(s1,s1,0,255,cv2.NORM_MINMAX).astype(int)
 s2=cv2.normalize(s2,s2,0,255,cv2.NORM_MINMAX).astype(int)
 fs=cv2.normalize(faces,faces,0,255,cv2.NORM_MINMAX).astype(int)
@@ -77,13 +77,17 @@ def f1(x):
     x=x.reshape(64,64)
     #x=cv2.normalize(x,x,0,255,cv2.NORM_MINMAX).astype(int)
     return x
-def f2(x1,x2,n):
-    x1,x2=f1(x1),f1(x2)
-    y=np.zeros((64,128))
+
+def f2(x1,x2,x3,n):
+    x1,x2,x3=f1(x1),f1(x2),f1(x3)
+    y=np.zeros((64,64*3))
     y[:,:64]=x1
-    y[:,64:]=x2
-    cv2.imshow('',y)
+    y[:,64:64*2]=x2
+    y[:,64*2:]=x3
+    #cv2.imshow('',y)
     cv2.imwrite('{}.jpg'.format(n),y)
 
 for i in range(20):
-	f2(s2[i],fs[i],i)
+    i1=np.random.randint(0,20)
+    #i1=i
+    f2(s1[i1],s2[i1],fs[i1],i+3)
