@@ -1,0 +1,84 @@
+'''
+#https://github.com/caiiiac/Machine-Learning-with-Python/tree/master/%E8%AF%BE%E7
+%A8%8B%E6%95%B0%E6%8D%AE/%E5%9B%9E%E5%BD%92
+
+岭回归
+
+岭回归是一种专用于共线性数据分析的有偏估计回归方法，实质上是一种改良的最小二乘估计法，
+通过放弃最小二乘法的无偏性，以损失部分信息、降低精度为代价获得回归系数更为符合实际、更可靠的回归方法，
+对病态数据的拟合要强于最小二乘法。
+
+使用sklearn.linear_model.Ridge进行岭回归
+一个简单的例子
+
+from sklearn.linear_model import Ridge
+clf = Ridge(alpha=.5)
+X = [[0,0],[0,0],[1,1]]
+y = [0,.1,1]
+clf.fit(X,y)
+print(clf.coef_)                                              #斜率
+print(clf.intercept_)                                         #截距
+
+
+使用方法
+实例化
+Ridge类已经设置了一系列默认的参数，因此clf = Ridge()即可以完成实例化。
+但是，了解一下它的参数还是有必要的：
+
+alpha：正则化项的系数
+copy_X：是否对X数组进行复制，默认为True，如果选False的话会覆盖原有X数组
+fit_intercept：是否需要计算截距
+max_iter：最大的迭代次数，对于sparse_cg和lsqr而言，默认次数取决于scipy.sparse.linalg，对于sag而言，
+则默认为1000次。
+normalize：标准化X的开关，默认为False
+solver：在计算过程中选择的解决器
+auto：自动选择
+svd：奇异值分解法，比cholesky更适合计算奇异矩阵
+cholesky：使用标准的scipy.linalg.solve方法
+sparse_cg：共轭梯度法，scipy.sparse.linalg.cg,适合大数据的计算
+lsqr：最小二乘法，scipy.sparse.linalg.lsqr
+sag：随机平均梯度下降法，在大数据下表现良好。
+注：后四个方法都支持稀疏和密集数据，而sag仅在fit_intercept为True时支持密集数据。
+
+tol：精度
+random_state：sag的伪随机种子
+以上就是所有的初始化参数，当然，初始化后还可以通过set_params方法重新进行设定。
+
+'''
+import numpy as np,pickle,time,pandas as pd,sklearn
+from sklearn import datasets,metrics
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt,cv2
+from sklearn.cluster import KMeans,DBSCAN
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import Imputer,PolynomialFeatures
+from sklearn.metrics import classification_report
+
+
+
+a=pd.read_csv('2.txt')
+x,y=a.iloc[:,1:5].values,a.iloc[:,5].values
+
+
+poly=PolynomialFeatures(degree=6)                 #转成6次多项式
+x=poly.fit_transform(x)
+
+
+train_set_x,test_set_x,train_set_y,test_set_y=train_test_split(x,y,test_size=.7,random_state=0)
+
+
+clf=sklearn.linear_model.Ridge(alpha=1,fit_intercept=True)
+clf.fit(train_set_x,train_set_y)
+res=clf.score(test_set_x,test_set_y)
+
+
+
+start,end=200,300
+y_pre=clf.predict(x)
+time=np.arange(start,end)
+plt.plot(time,y[start:end],'b',label='real')
+plt.plot(time,y_pre[start:end],'r',label='predict')
+plt.legend(loc='upper left')
+plt.show()
