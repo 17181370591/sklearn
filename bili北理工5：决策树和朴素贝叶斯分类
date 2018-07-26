@@ -1,0 +1,27 @@
+#没怎么看懂
+
+import numpy as np,pickle,time,pandas as pd
+from sklearn import datasets,metrics
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt,cv2
+from sklearn.cluster import KMeans,DBSCAN
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+
+
+clf=DecisionTreeClassifier()                   #决策树
+iris=datasets.load_iris()
+a=iris.data
+b=iris.target
+print(cross_val_score(clf,a,b,cv=10))              #决策树测试方法1
+
+clf1=DecisionTreeClassifier()
+clf1.fit(a,b)
+print(cross_val_score(clf1,a,b,cv=10))                 #决策树测试方法2
+
+x=np.array([[-1,-1],[-2,-1],[-3,-2],[1,1],[2,1],[3,2]])
+y=np.array([1,1,1,2,2,2])
+clf=GaussianNB(priors=None)
+clf.fit(x,y)
+print(clf.predict([[-0.8,-1],[-0.8,-1],[-0.8,1]]))
