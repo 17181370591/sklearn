@@ -42,6 +42,7 @@ starttime=starttime.values.astype(int).reshape(-1,1)
 
 
 
+#注意这里的参数，实际例子中上网实际全是整数，所以设置eps=.01,ms=20其实就是找某个时间有20个人以上在那时开始上网
 def f(xx=starttime,eps=.01,ms=20):
     db=DBSCAN(eps=eps,min_samples=ms).fit(xx)                 #训练
     labels=db.labels_                                          #获取标签
