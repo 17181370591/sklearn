@@ -1,0 +1,23 @@
+#和cv2的图像颜色量化类似
+
+import numpy as np,pickle,time,pandas as pd
+from sklearn import datasets,metrics
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt,cv2
+from sklearn.cluster import KMeans,DBSCAN
+
+
+def loadData(path='2.jpg'):
+    img=cv2.imread(path)
+    s=img.shape
+    return img.reshape(-1,3),s[0],s[1]
+
+img,w,h=loadData()
+km=KMeans(n_clusters=3)
+label=km.fit_predict(img)
+label=label.reshape((w,h))
+label1=np.zeros_like(label)
+label1=cv2.normalize(label,label1,0,255,cv2.NORM_MINMAX)
+#cv2.imshow('',label1)
+cv2.imwrite('a1.jpg',label1)
