@@ -1,0 +1,190 @@
+'''
+https://github.com/caiiiac/Machine-Learning-with-Python/tree/master/
+%E8%AF%BE%E7%A8%8B%E6%95%B0%E6%8D%AE/%E5%9B%9E%E5%BD%92
+
+参数设置见原贴：https://www.bilibili.com/video/av15478453/?p=16
+
+mlpclassifier参数说明： 
+
+
+1. hidden_layer_sizes :元祖格式，长度=n_layers-2, 默认(100，），第i个元素表示第i个隐藏层的神经元的个数。 
+
+
+2. activation :{‘identity’, ‘logistic’, ‘tanh’, ‘relu’}, 默认‘relu 
+- ‘identity’： no-op activation, useful to implement linear bottleneck， 返回f(x) = x 
+- ‘logistic’：the logistic sigmoid function, returns f(x) = 1 / (1 + exp(-x)). 
+- ‘tanh’：the hyperbolic tan function, returns f(x) = tanh(x). 
+- ‘relu’：the rectified linear unit function, returns f(x) = max(0, x) 
+
+
+4. solver： {‘lbfgs’, ‘sgd’, ‘adam’}, 默认 ‘adam’，用来优化权重 
+- lbfgs：quasi-Newton方法的优化器 
+- sgd：随机梯度下降 
+- adam： Kingma, Diederik, and Jimmy Ba提出的机遇随机梯度的优化器 
+注意：默认solver ‘adam’在相对较大的数据集上效果比较好（几千个样本或者更多），对小数据集来说，
+lbfgs收敛更快效果也更好。 
+
+
+5. alpha :float,可选的，默认0.0001,正则化项参数 
+
+
+6. batch_size : int , 可选的，默认‘auto’,随机优化的minibatches的大小，如果solver是‘lbfgs’，
+分类器将不使用minibatch，当设置成‘auto’，batch_size=min(200,n_samples) 
+
+
+7. learning_rate :{‘constant’，‘invscaling’, ‘adaptive’},默认‘constant’，用于权重更新，
+只有当solver为’sgd‘时使用 
+- ‘constant’: 有‘learning_rate_init’给定的恒定学习率 
+- ‘incscaling’：随着时间t使用’power_t’的逆标度指数不断降低学习率learning_rate_ ，
+effective_learning_rate = learning_rate_init / pow(t, power_t) 
+- ‘adaptive’：只要训练损耗在下降，就保持学习率为’learning_rate_init’不变，
+当连续两次不能降低训练损耗或验证分数停止升高至少tol时，将当前学习率除以5. 
+
+
+8. max_iter: int，可选，默认200，最大迭代次数。 
+
+
+9. random_state:int 或RandomState，可选，默认None，随机数生成器的状态或种子。 
+
+
+10. shuffle: bool，可选，默认True,只有当solver=’sgd’或者‘adam’时使用，判断是否在每次迭代时对样本进行清洗。 
+
+
+11. tol：float, 可选，默认1e-4，优化的容忍度 
+
+
+12. learning_rate_int:double,可选，默认0.001，初始学习率，控制更新权重的补偿，
+只有当solver=’sgd’ 或’adam’时使用。 
+
+
+13. power_t: double, optional, default 0.5，只有solver=’sgd’时使用，是逆扩展学习率的指数.
+当learning_rate=’invscaling’，用来更新有效学习率。 
+
+
+14. verbose : bool, optional, default False,是否将过程打印到stdout 
+
+
+15. warm_start : bool, optional, default False,当设置成True，使用之前的解决方法作为初始拟合，
+否则释放之前的解决方法。 
+
+
+16. momentum : float, default 0.9,Momentum(动量） for gradient descent update.
+Should be between 0 and 1. Only used when solver=’sgd’. 
+
+
+17. nesterovs_momentum : boolean, default True, Whether to use Nesterov’s momentum.
+Only used when solver=’sgd’ and momentum > 0. 
+
+
+18. early_stopping : bool, default False,Only effective when solver=’sgd’ or ‘adam’,
+判断当验证效果不再改善的时候是否终止训练，当为True时，
+自动选出10%的训练数据用于验证并在两步连续爹迭代改善低于tol时终止训练。 
+
+
+19. validation_fraction : float, optional, default 0.1,用作早期停止验证的预留训练数据集的比例，
+早0-1之间，只当early_stopping=True有用 
+
+
+20. beta_1 : float, optional, default 0.9，Only used when solver=’adam’，
+估计一阶矩向量的指数衰减速率，[0,1)之间 
+
+
+21. beta_2 : float, optional, default 0.999,Only used when solver=’adam’
+估计二阶矩向量的指数衰减速率[0,1)之间 
+
+
+22. epsilon : float, optional, default 1e-8,Only used when solver=’adam’数值稳定值。 
+
+
+属性说明： 
+- classes_:每个输出的类标签 
+- loss_:损失函数计算出来的当前损失值 
+- coefs_:列表中的第i个元素表示i层的权重矩阵 
+- intercepts_:列表中第i个元素代表i+1层的偏差向量 
+- n_iter_ ：迭代次数 
+- n_layers_:层数 
+- n_outputs_:输出的个数 
+- out_activation_:输出激活函数的名称。 
+
+
+方法说明： 
+- fit(X,y):拟合 
+- get_params([deep]):获取参数 
+- predict(X):使用MLP进行预测 
+- predic_log_proba(X):返回对数概率估计 
+- predic_proba(X)：概率估计 
+- score(X,y[,sample_weight]):返回给定测试数据和标签上的平均准确度 
+-set_params(**params):设置参数。
+
+视频里说：
+hidden_layer_sizes表示隐藏层的神经元的个数，越大则越准但更慢；
+max_iter越大越慢，只需使模型达到收敛即可；
+learning_rate_init给定学习率，较小时可能达到最大迭代次数时还没收敛造成准确率低，
+所以这个值小时需要较大的max_iter
+'''
+
+
+
+
+import numpy as np,pickle,time,pandas as pd,sklearn,os
+from sklearn import datasets,metrics
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt,cv2
+from sklearn.cluster import KMeans,DBSCAN
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import Imputer,PolynomialFeatures
+from sklearn.metrics import classification_report
+from sklearn.neural_network import MLPClassifier
+
+
+
+p00=r'C:\Users\Administrator\Desktop\2'
+p11=p00+r'\trainingDigits'
+p22=p00+r'\testDigits'
+
+p1=os.listdir(p11)
+p2=os.listdir(p22)
+
+
+
+def getd(i,path=p11,names=p1):   
+    x=open(os.path.join(path,names[i]),'r').read().replace('\n','')
+    x=np.array(list(x)).astype(int)
+    y=int(name[i].split('_')[0])
+    x=np.hstack((x,y))
+    return x
+
+#设置qq是为了只去部分数据运行程序，因为电脑运行mlp太慢了，
+#但是这样设置训练结果全是0，所以完全没用。
+#d1，l1是训练数据，训练数据的标签
+#d2，l2是测试数据，测试数据的标签
+qq=111
+a=[getd(i) for i in range(len(p1))]
+b=np.vstack(a)
+d1=b[:,:-1]
+l1=b[:,-1]
+
+a=[getd(i,p22,p2) for i in range(len(p2))]
+b=np.vstack(a)
+d2=b[:,:-1]
+l2=b[:,-1]
+
+
+
+def mlp():                                          #0.975，速度超级慢
+    clf=MLPClassifier(hidden_layer_sizes=(100,),
+                  activation='logistic',solver='adam',
+                  learning_rate_init=.0001,max_iter=2000)
+    clf.fit(d1,l1)
+    print(clf.score(d2,l2))
+    
+    
+
+def knn():                                           #0.98，速度快
+    c=KNeighborsClassifier()
+    c.fit(d1,l1)
+    print(c.score(d2,l2))
+    
+
