@@ -31,16 +31,19 @@ def pg(images,n_col=n_col,n_row=n_row):
         #print('comp.max(),-comp.min()=',comp.max(),-comp.min())
         vmax=max(comp.max(),-comp.min())
         plt.imshow(comp.reshape(image_shape),
-                                  vmin=-vmax,vmax=vmax,
-                                  interpolation='nearest'
+                 vmin=-vmax,vmax=vmax,	    		 #这里类似用归一化的方法，调节亮度
+                 interpolation='nearest'
                    )
         plt.xticks(())
         plt.yticks(())
     plt.show()
     
-    
-estimators=[('PCA',decomposition.PCA(n_components=6,witen=True)),
-            ('NMF',decomposition.NMF(n_components=6,init='nndsvda',tol=5e-3))]
+
+
+
+nc=6
+estimators=[('PCA',decomposition.PCA(n_components=nc,witen=True)),
+            ('NMF',decomposition.NMF(n_components=nc,init='nndsvda',tol=5e-3))]
 
 
 
@@ -56,8 +59,10 @@ for name,estimator in estimators:
 
 
 '''
+注意：
 下面的代码是自己添加的，包括上面和res相关的部分，作用是：w和h相乘得到的矩阵v就是图片降维后的数据，
-所以将新数据和原数据画图对比。但是新数据画图时会出现按顺序随机取数据的bug，不知道怎么解决
+所以将新数据和原数据画图对比。特别注意，由于原代码nc取6，值比较小，所以会丢失很多信息，比如眼镜等，
+造成部分图和对应的v差异很大，这里增大nc会发现差异变小。但nc过大时特征过多，反而不准，这里取32效果不错
 '''
 s1=np.array(np.dot(res[0][0],res[0][1]))
 s2=np.array(np.dot(res[1][0],res[1][1]))
