@@ -1,0 +1,85 @@
+#https://www.bilibili.com/video/av15478453/?p=12
+#https://github.com/caiiiac/Machine-Learning-with-Python/tree/master/%
+E8%AF%BE%E7%A8%8B%E6%95%B0%E6%8D%AE/%E5%88%86%E7%B1%BB
+'''
+这里最需要注意的是Imputer的用法和它的参数missing_values和read_table的用法和它的参数na_values。
+'''
+
+
+import numpy as np,pickle,time,pandas as pd
+from sklearn import datasets,metrics
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt,cv2
+from sklearn.cluster import KMeans,DBSCAN
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import Imputer
+from sklearn.metrics import classification_report
+
+feature_paths=['{}.feature'.format(i) for i in list('ABCDE')]
+label_paths=['{}.label'.format(i) for i in list('ABCDE')]
+def load_dataset(feature_paths=feature_paths,label_paths=label_paths):
+
+    #原代码df后面没有用[:qq]进行切片，电脑运行速度太慢所以我切片了
+    qq=50000
+    feature=np.ndarray((0,41))
+    label=np.ndarray((0,1))
+    #feature=np.zeros((0,41))
+    #label=np.zeros((0,1))
+    for file in feature_paths:
+        print(file)
+
+        #na_values='?'的意思是，如果该值是'?'，则转换成None
+        df=pd.read_table(file,delimiter=',',na_values='?',header=None)[:qq]
+        print(df.shape)
+
+        '''
+        https://blog.csdn.net/sinat_33761963/article/details/53433799
+        imp.fit完后，每个None值就是对应列的均值。
+        imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
+        imp.fit([[1, 2], [np.nan, 3], [7, 6]])
+        x = [[np.nan, 2], [6, np.nan], [7, 6]]
+        imp.transform(x)
+        >>> array([[ 4.        ,  2.        ],
+               [ 6.        ,  3.66666667],
+               [ 7.        ,  6.        ]])
+        '''
+        imp=Imputer(missing_values='NaN',strategy='mean',axis=0)
+        imp.fit(df)
+        df=imp.transform(df)
+        feature=np.concatenate((feature,df))
+    for file in label_paths:
+        print(file)
+        df=pd.read_table(file,header=None)[:qq]
+        print(df.shape)
+        label=np.concatenate((label,df))
+    label=np.ravel(label)
+    return feature,label
+
+
+
+
+xtrain1,ytrain1=load_dataset(feature_paths[:4],label_paths[:4])
+xtest,ytest=load_dataset(feature_paths[4:],label_paths[4:])
+#打乱顺序
+xtrain,a,ytrain,b=train_test_split(xtrain1,ytrain1,test_size=0)
+
+
+
+
+knn=KNeighborsClassifier()
+knn.fit(xtrain,ytrain)
+answer_knn=knn.predict(xtest)
+
+dt=DecisionTreeClassifier()
+dt.fit(xtrain,ytrain)
+answer_dt=knn.predict(xtest)
+
+gnb=GaussianNB()
+gnb.fit(xtrain,ytrain)
+answer_gnb=knn.predict(xtest) 
+
+print(classification_report(ytest,answer_knn))
+print(classification_report(ytest,answer_dt))
+print(classification_report(ytest,answer_gnb))
