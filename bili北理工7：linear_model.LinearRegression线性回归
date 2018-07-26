@@ -1,0 +1,27 @@
+import numpy as np,pickle,time,pandas as pd,sklearn
+from sklearn import datasets,metrics
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt,cv2
+from sklearn.cluster import KMeans,DBSCAN
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import Imputer
+from sklearn.metrics import classification_report
+
+
+a=pd.read_csv('2.txt',header=None)
+x,y=a.loc[:,0].values,a.loc[:,1].values
+X=np.arange(x.min(),x.max())
+line=sklearn.linear_model.LinearRegression()
+line.fit(x.reshape(-1,1),y.reshape(-1,1))         #不reshape报错
+
+print(line.coef_,line.intercept_)                 #分别是斜率和截距
+#>>>[[0.14839484]] [43.92337096]
+#>>>line.predict(100)
+#>>>array([[58.76285491]])
+
+
+plt.scatter(x,y,color='r')
+plt.plot(X,line.predict(X.reshape(-1,1)),color='b')
+plt.show()
