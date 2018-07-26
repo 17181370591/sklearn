@@ -1,0 +1,38 @@
+
+import numpy as np,pickle,time,pandas as pd,sklearn
+from sklearn import datasets,metrics
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split,cross_val_score
+import matplotlib.pyplot as plt,cv2
+from sklearn.cluster import KMeans,DBSCAN
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import Imputer,PolynomialFeatures
+from sklearn.metrics import classification_report
+
+
+
+
+a=pd.read_csv('2.txt',header=None)
+x,y=a.loc[:,0].values.reshape(-1,1),a.loc[:,1].values.reshape(-1,1)
+X=np.arange(x.min(),x.max()).reshape(-1,1)
+
+
+
+poly_reg=PolynomialFeatures(degree=2)         #degree是多项式最高次数
+x_poly=poly_reg.fit_transform(x)
+'''
+这说明poly_reg.fit_transform(x)就是将x代入ax**2+b*x+c，然后进行线性回归计算abc
+>>> poly_reg.fit_transform([[3]])
+array([[1., 3., 9.]])
+'''
+
+
+line=sklearn.linear_model.LinearRegression()
+line.fit(x_poly,y)
+print(line.coef_,line.intercept_)
+
+
+plt.scatter(x,y,color='r')
+plt.plot(X,line.predict(poly_reg.fit_transform(X)),color='b')
+plt.show()
