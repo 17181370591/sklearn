@@ -152,7 +152,7 @@ p2=os.listdir(p22)
 def getd(i,path=p11,names=p1):   
     x=open(os.path.join(path,names[i]),'r').read().replace('\n','')
     x=np.array(list(x)).astype(int)
-    y=int(name[i].split('_')[0])
+    y=int(names[i].split('_')[0])
     x=np.hstack((x,y))
     return x
 
@@ -172,7 +172,7 @@ d2=b[:,:-1]
 l2=b[:,-1]
 
 
-
+#这个实例中，knn效果比mlp效果好很多，因为mlp容易在小数据集上过拟合且对参数敏感
 def mlp():                                   #0.978，速度超级慢，我把原参数改成.01,200还是比较慢
     cs1,cs2=.01,200
     #cs1,cs2=.0001,2000
@@ -184,8 +184,9 @@ def mlp():                                   #0.978，速度超级慢，我把�
     
     
 
-def knn():                                           #0.98，速度快
-    c=KNeighborsClassifier()
+#k大于3后，越大越不准，因为远处的数据也会产生影响
+def knn(k=3):                                           #0.98，速度快
+    c=KNeighborsClassifier(n_neighbors=k)
     c.fit(d1,l1)
     print(c.score(d2,l2))
     
