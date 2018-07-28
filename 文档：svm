@@ -192,8 +192,9 @@ array([[-7.10542736e-15, -6.66425158e-01]])
 array([2.33248805])
 '''
 
-
-
+r=[1,1,-1,-1]
+print(svc.score(T,r))                                 #1
+print(svc.score(T,[1,1,1,-1]))                        #0.75
 z=svc.predict(T)
 
 plt.scatter(x[:,0][:,None],x[:,1],color='r')
