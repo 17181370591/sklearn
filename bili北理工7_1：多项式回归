@@ -36,3 +36,35 @@ print(line.coef_,line.intercept_)
 plt.scatter(x,y,color='r')
 plt.plot(X,line.predict(poly_reg.fit_transform(X)),color='b')
 plt.show()
+
+
+'''
+========================================================================
+另一个例子和另一种写法
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import Pipeline
+import numpy as np
+from matplotlib import pyplot as plt
+
+model = Pipeline([('poly', PolynomialFeatures(degree=3)),
+                  ('linear', LinearRegression(fit_intercept=False))])
+
+x = np.arange(5)                            #>>>array([0, 1, 2, 3, 4])
+y = 3 - 2 * x + x ** 2 - x ** 3
+
+model = model.fit(x[:, np.newaxis], y)
+print(model.named_steps['linear'].coef_)
+#>>>[ 3. -2.  1. -1.]
+
+
+p=PolynomialFeatures(degree=3)
+z=p.fit_transform(x[:,None])
+
+l=LinearRegression()
+l.fit(z,y)
+
+print(l.coef_,l.intercept_)
+#>>>[ 0. -2.  1. -1.]     2.999999999999993
+
+'''
